@@ -572,8 +572,10 @@
       <div class="container">
         <div class="download-card download-card-compact reveal">
           <div class="download-copy">
-            <div class="section-kicker">Доступна версия 1.0.0</div>
-            <h2>Darkwave 1.0.0</h2>
+            <div class="section-kicker">
+              Доступна версия <span data-latest-version>…</span>
+            </div>
+            <h2>Darkwave <span data-latest-version>…</span></h2>
           </div>
           <div class="download-action">
             <a class="button button-primary" href="https://darkwave-downloads.frol748748.workers.dev/download/latest" rel="noreferrer"><span aria-hidden="true">↓</span> Скачать Darkwave</a>
@@ -684,6 +686,33 @@
       if (event.key === 'Escape' && screenshotLightbox.classList.contains('open')) closeScreenshot();
     });
     document.getElementById('year').textContent = new Date().getFullYear();
+    (async () => {
+  const labels = document.querySelectorAll('[data-latest-version]');
+
+  try {
+    const response = await fetch(
+      'https://ylwuvijbserlqwnicmkk.supabase.co/storage/v1/object/public/darkwave-updates/latest.json',
+      { cache: 'no-store' }
+    );
+
+    if (!response.ok) throw new Error('Не удалось получить версию');
+
+    const manifest = await response.json();
+    const version = String(manifest.version || '').trim();
+
+    if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(version)) {
+      throw new Error('Некорректная версия');
+    }
+
+    labels.forEach(label => {
+      label.textContent = version;
+    });
+  } catch {
+    labels.forEach(label => {
+      label.textContent = '—';
+    });
+  }
+})();
   </script>
 </body>
 </html>

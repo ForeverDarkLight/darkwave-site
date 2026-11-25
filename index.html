@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Darkwave — тёмный музыкальный плеер</title>
+<meta name="description" content="Darkwave — музыкальный плеер для Windows: «Моя волна», совместное прослушивание в комнатах, офлайн-режим, тексты песен и статус в Discord.">
+<meta name="theme-color" content="#0a0509">
+<style>
+:root{
+  --bg:#07040a; --bg2:#0e0810; --card:#120a14; --line:rgba(255,255,255,.08);
+  --text:#f4eef3; --muted:#a79aa6; --pink:#f0608f; --pink2:#ff8fb1; --wine:#3a1327;
+  --radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:
+  radial-gradient(900px 500px at 15% -5%,rgba(240,96,143,.18),transparent 60%),
+  radial-gradient(800px 600px at 100% 20%,rgba(120,30,70,.25),transparent 60%),
+  radial-gradient(700px 500px at 0% 90%,rgba(90,20,60,.2),transparent 60%),var(--bg)}
+a{color:inherit;text-decoration:none}
+.wrap{width:min(1180px,100% - 40px);margin:0 auto}
+
+/* nav */
+nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(7,4,10,.7);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;letter-spacing:.2px}
+.logo i{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--pink),#9b2c5c)}
+.logo svg{width:18px;height:18px}
+.links{display:flex;gap:26px;align-items:center;font-size:14px;color:var(--muted)}
+.links a:hover{color:var(--text)}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:12px 22px;border-radius:999px;font-weight:600;font-size:15px;border:1px solid var(--line);background:rgba(255,255,255,.04);transition:.2s;cursor:pointer;color:var(--text)}
+.btn:hover{background:rgba(255,255,255,.09);transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(135deg,var(--pink),#d9456f);border-color:transparent;box-shadow:0 10px 40px -10px rgba(240,96,143,.7)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn svg{width:18px;height:18px}
+
+/* hero */
+.hero{padding:90px 0 40px;text-align:center}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:6px 14px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--muted);background:rgba(255,255,255,.03)}
+.pill b{color:var(--pink2);font-weight:600}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--pink);box-shadow:0 0 12px var(--pink)}
+h1{font-size:clamp(40px,7vw,78px);line-height:1.04;margin:22px auto 18px;letter-spacing:-1.5px;max-width:900px}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--pink2),var(--pink) 50%,#b4417a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{max-width:640px;margin:0 auto 34px;color:var(--muted);font-size:18px}
+.cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.meta{margin-top:16px;font-size:13px;color:var(--muted)}
+.shot-hero{margin:60px auto 0;max-width:1080px;position:relative}
+.shot-hero::before{content:"";position:absolute;inset:8% 5% -4%;background:radial-gradient(closest-side,rgba(240,96,143,.35),transparent);filter:blur(60px);z-index:-1}
+
+/* screenshot frame */
+.shot{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:var(--card);box-shadow:0 40px 80px -30px rgba(0,0,0,.9);aspect-ratio:16/9}
+.shot img{display:block;width:100%;height:100%;object-fit:cover;cursor:zoom-in}
+.shot .ph{position:absolute;inset:0;display:none;place-items:center;text-align:center;padding:20px;color:var(--muted);font-size:13px;background:repeating-linear-gradient(45deg,#120a14,#120a14 12px,#160c18 12px,#160c18 24px)}
+.shot.missing .ph{display:grid}
+.shot.missing img{display:none}
+.ph code{color:var(--pink2)}
+
+/* sections */
+section{padding:90px 0}
+.eyebrow{color:var(--pink2);font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+h2{font-size:clamp(30px,4.4vw,48px);line-height:1.1;letter-spacing:-1px;margin:12px 0 14px}
+.sub{color:var(--muted);max-width:620px;font-size:17px}
+.center{text-align:center}.center .sub{margin:0 auto}
+
+.feature{display:grid;grid-template-columns:1fr 1.25fr;gap:56px;align-items:center;margin-top:90px}
+.feature.rev{grid-template-columns:1.25fr 1fr}
+.feature.rev .txt{order:2}
+.feature h3{font-size:30px;line-height:1.15;letter-spacing:-.6px;margin:10px 0 12px}
+.feature p{color:var(--muted);font-size:16.5px}
+.feature ul{list-style:none;margin-top:18px;display:grid;gap:10px}
+.feature li{display:flex;gap:10px;color:#d9cfd8;font-size:15px}
+.feature li::before{content:"";flex:none;margin-top:9px;width:6px;height:6px;border-radius:50%;background:var(--pink)}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:48px}
+.card{padding:26px;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015))}
+.card .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:rgba(240,96,143,.14);color:var(--pink2);margin-bottom:16px}
+.card .ic svg{width:22px;height:22px}
+.card h4{font-size:18px;margin-bottom:6px}
+.card p{color:var(--muted);font-size:14.5px}
+
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:48px}
+.gallery figure figcaption{margin-top:10px;font-size:14px;color:var(--muted);text-align:center}
+
+/* download */
+.dl{border:1px solid var(--line);border-radius:28px;padding:64px 28px;text-align:center;background:
+  radial-gradient(600px 300px at 50% 0%,rgba(240,96,143,.22),transparent 70%),linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.01))}
+.dl .ver{display:inline-block;margin:20px 0 6px;font-size:14px;color:var(--muted)}
+.dl .ver b{color:var(--pink2)}
+.dl .alt{margin-top:18px;font-size:14px;color:var(--muted)}
+.dl .alt a{color:var(--pink2);text-decoration:underline;text-underline-offset:3px}
+.req{margin-top:26px;display:flex;gap:10px 22px;justify-content:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+
+footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* lightbox */
+#lb{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;place-items:center;z-index:100;padding:24px;cursor:zoom-out}
+#lb.on{display:grid}
+#lb img{max-width:100%;max-height:100%;border-radius:10px}
+
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}
+.reveal.in{opacity:1;transform:none}
+
+@media(max-width:900px){
+  .links a.hide-m{display:none}
+  .feature,.feature.rev{grid-template-columns:1fr;gap:28px;margin-top:64px}
+  .feature.rev .txt{order:0}
+  .grid{grid-template-columns:1fr}
+  .gallery{grid-template-columns:1fr}
+  .hero{padding-top:56px}
+  section{padding:64px 0}
+}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+:root{--bg:#0c0b10;--text:#f6eee4;--muted:#c0b5b9;--pink:#f28da9;--pink2:#ffb1be}
+body::before{background:var(--bg)}nav{background:#100e14ed}
+section{scroll-margin-top:64px}.reveal{opacity:1;transform:none}
+.hero{position:relative;isolation:isolate;text-align:left;padding:clamp(68px,10vw,144px) 0;background:#15121b}
+
+.hero .wrap{display:grid;grid-template-columns:minmax(0,.87fr) minmax(0,1.13fr);gap:clamp(22px,4vw,70px);align-items:center}
+.hero h1{font-size:clamp(60px,7.1vw,104px);letter-spacing:-.072em;line-height:1;margin:0 0 24px}
+.hero .lead{font-size:clamp(16px,1.4vw,20px);max-width:31em;margin:0 0 25px}
+.hero .cta{justify-content:flex-start;gap:9px}.hero .btn{font-size:14px;padding:11px 17px}
+.shot-hero{margin:0;width:100%}.shot{display:block;cursor:zoom-in}.shot img{object-fit:contain}.shot:focus-visible,.btn:focus-visible,button:focus-visible{outline:3px solid #ffc0d3;outline-offset:4px}
+.btn.primary{color:#211018!important;background:#f3a1b7;box-shadow:none}
+.feature{padding-top:clamp(25px,4vw,62px);border-top:1px solid var(--line);margin-top:clamp(35px,5vw,72px)}
+.gallery{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}.gallery figure{min-width:0}.gallery figure figcaption{text-align:left;padding:5px 0}.gallery strong,.gallery span{display:block}.gallery strong{color:var(--text);font-size:20px}.pic-07-discord{background:radial-gradient(ellipse,#483141,#1e171f);border-color:#48323f}
+#viewer{position:fixed;inset:0;margin:auto;border:0;background:transparent;color:var(--text);width:100vw;max-width:none;height:100dvh;max-height:none;padding:clamp(10px,2vw,24px)}
+#viewer::backdrop{background:#08070af5}.viewer-shell{margin:auto;width:fit-content;max-width:100%;height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px}.viewer-shell header,.viewer-shell footer{display:flex;align-items:center;gap:16px;justify-content:space-between;padding:0;border:0}.viewer-shell footer{justify-content:center}.viewer-shell img{width:100%;height:100%;object-fit:contain}.viewer-shell button{width:44px;height:44px;border:1px solid #564651;background:#211c23;border-radius:50%;color:inherit;font-size:24px;cursor:pointer}.viewer-shell{width:min(100%,1600px);pointer-events:none}.viewer-shell img,.viewer-shell button{pointer-events:auto}
+@media(max-width:850px){.hero .wrap{grid-template-columns:1fr}.hero{padding:55px 0 34px}.shot-hero{margin-top:12px}.gallery{grid-template-columns:1fr}.hero::before{background-position:center}.wrap{width:min(1180px,100% - 32px)}}
+
+body::before{background:radial-gradient(ellipse at 86% 55%,#1b101d 0,transparent 48%),#0c0b10}
+.hero{overflow:hidden;background:#0e0b13}
+.plasma-field{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:radial-gradient(ellipse at 58% 40%,#432032 0,#201320 42%,#100d15 80%)}
+.plasma-orb{position:absolute;width:clamp(440px,63vw,950px);aspect-ratio:1;left:45%;top:40%;transform:translate(-50%,-50%);background:url('assets/plasma.webp') center/contain no-repeat;mix-blend-mode:screen}
+.plasma-field::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#100b14be,transparent 63%),linear-gradient(0deg,#0c0b10,transparent 22%)}
+.hero .lead{color:#e0d4d8}.hero .meta{color:#c5b6c1}
+@keyframes plasma-drift{from{transform:translate(-51%,-49%) rotate(-9deg) scale(.97)}to{transform:translate(-47%,-53%) rotate(12deg) scale(1.05)}}
+@keyframes rise-in{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:no-preference){
+ .plasma-orb{animation:plasma-drift 19s ease-in-out infinite alternate}
+ .plasma-idle .plasma-orb{animation-play-state:paused}
+ .hero-copy>* ,.shot-hero{animation:rise-in .75s cubic-bezier(.2,.68,.19,1) both}
+ .hero-copy .lead{animation-delay:70ms}.hero-copy .cta,.shot-hero{animation-delay:140ms}.hero-copy .meta{animation-delay:200ms}
+ .await-reveal{opacity:0;transform:translateY(18px);transition:opacity .65s ease-out,transform .65s cubic-bezier(.22,.7,.22,1)}
+ .await-reveal.visible,.await-reveal:focus-within{opacity:1;transform:none}
+ .gallery figure:nth-child(2){transition-delay:65ms}.gallery figure:nth-child(3){transition-delay:130ms}
+ #viewer[open] .viewer-shell{animation:rise-in .22s ease-out}
+}
+@media(max-width:850px){.plasma-orb{left:70%;top:28%;width:clamp(430px,95vw,740px)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important}.btn,.reveal,.await-reveal{transition:none!important}.await-reveal{opacity:1!important;transform:none!important}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="#top" class="logo"><i><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M4 10v4M8 6v12M12 3v18M16 7v10M20 10v4"/></svg></i>Darkwave</a>
+    <div class="links">
+      <a href="#features" class="hide-m">Возможности</a>
+      <a href="#screens" class="hide-m">Скриншоты</a>
+      <a class="btn primary" href="#download" style="padding:9px 18px;color:#fff">Скачать</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="plasma-field" aria-hidden="true"><div class="plasma-orb"></div></div>
+  <div class="wrap">
+    <div class="hero-copy">
+    <h1>Darkwave</h1>
+    <p class="lead">Музыкальный плеер для Windows и Android. Открывай треки в «Моей волне», слушай вместе с друзьями и сохраняй любимое для дороги.</p>
+    <div class="cta">
+      <a class="btn primary js-dl" href="#download">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg>
+        Скачать для Windows <span class="js-ver-btn"></span>
+      </a>
+      <a class="btn js-apk-hero" href="#download">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M11 18.5h2"/></svg>
+        Для Android
+      </a>
+    </div>
+    <p class="meta">Бесплатно · Windows и Android</p></div>
+
+    <div class="shot-hero">
+      <a class="shot pic-01-home" href="screenshots/01-home.webp" data-slide="0" aria-label="Увеличить скриншот: Главная"><img src="screenshots/01-home.webp" fetchpriority="high" decoding="async" alt="Главная в Darkwave"></a>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <div class="center reveal">
+      <div class="eyebrow">Возможности</div>
+      <h2>Всё для твоей музыки</h2>
+      <p class="sub">Один плеер для любимых треков, скачанного и локальных файлов — с красивым тёмным интерфейсом.</p>
+    </div>
+
+    <div class="feature reveal">
+      <div class="txt">
+        <div class="eyebrow">Моя волна</div>
+        <h3>Бесконечный поток под настроение</h3>
+        <p>Включи волну и выбери настроение — бодрое, весёлое, спокойное или грустное. Вращающаяся пластинка и живая подсветка под обложкой делают прослушивание похожим на ритуал.</p>
+        <ul><li>Подбор треков под настроение</li><li>Работает и офлайн — из скачанной музыки</li><li>Плавный кроссфейд между треками</li></ul>
+      </div>
+      <a class="shot pic-03-wave" href="screenshots/03-wave.webp" data-slide="2" aria-label="Увеличить скриншот: Моя волна"><img src="screenshots/03-wave.webp" loading="lazy" decoding="async" alt="Моя волна в Darkwave"></a>
+    </div>
+
+    <div class="feature rev reveal">
+      <div class="txt">
+        <div class="eyebrow">Комнаты</div>
+        <h3>Слушайте вместе, в один момент</h3>
+        <p>Создай комнату, отправь друзьям короткий код — и все услышат один и тот же трек одновременно. Гости могут предлагать свои треки ведущему.</p>
+        <ul><li>Подключение по коду из 6 символов</li><li>Список слушателей и предложенные треки</li><li>Ведущий управляет воспроизведением</li></ul>
+      </div>
+      <a class="shot pic-04-rooms" href="screenshots/04-rooms.webp" data-slide="3" aria-label="Увеличить скриншот: Комнаты"><img src="screenshots/04-rooms.webp" loading="lazy" decoding="async" alt="Комнаты в Darkwave"></a>
+    </div>
+
+    <div class="feature reveal">
+      <div class="txt">
+        <div class="eyebrow">Тексты песен</div>
+        <h3>Текст идёт в такт музыке</h3>
+        <p>Полноэкранный режим с обложкой и синхронным текстом: текущая строка подсвечивается, остальные мягко размыты. Тексты подтягиваются автоматически.</p>
+        <ul><li>Синхронизация по строкам</li><li>Полноэкранный режим с очередью</li><li>Обложка и текст на одном экране</li></ul>
+      </div>
+      <a class="shot pic-08-lyrics" href="screenshots/08-lyrics.webp" data-slide="7" aria-label="Увеличить скриншот: Текст песни"><img src="screenshots/08-lyrics.webp" loading="lazy" decoding="async" alt="Текст песни в Darkwave"></a>
+    </div>
+
+    <div class="feature rev reveal">
+      <div class="txt">
+        <div class="eyebrow">Офлайн</div>
+        <h3>Скачивай и слушай без интернета</h3>
+        <p>Сохраняй треки, альбомы и плейлисты на устройство. Раздел «Скачанное» собирает всё, что доступно без сети, а локальные файлы играют как обычные треки.</p>
+        <ul><li>Треки, альбомы, плейлисты и исполнители</li><li>Быстрый доступ к папке с файлами</li><li>Локальные файлы с компьютера</li></ul>
+      </div>
+      <a class="shot pic-06-downloads" href="screenshots/06-downloads.webp" data-slide="5" aria-label="Увеличить скриншот: Скачанное"><img src="screenshots/06-downloads.webp" loading="lazy" decoding="async" alt="Скачанное в Darkwave"></a>
+    </div>
+
+
+  </div>
+</section>
+
+<section id="screens" style="padding-top:20px">
+  <div class="wrap">
+    <div class="center reveal">
+      <div class="eyebrow">Скриншоты</div>
+      <h2>Интерфейс Darkwave</h2>
+      <p class="sub">Нажми на картинку, чтобы открыть её на весь экран.</p>
+    </div>
+    <div class="gallery"><figure><a class="shot pic-02-search" href="screenshots/02-search.webp" data-slide="1" aria-label="Увеличить скриншот: Поиск"><img src="screenshots/02-search.webp" loading="lazy" decoding="async" alt="Поиск в Darkwave"></a><figcaption><strong>Поиск</strong><span>Треки, альбомы, исполнители и история запросов.</span></figcaption></figure><figure><a class="shot pic-05-collection" href="screenshots/05-collection.webp" data-slide="4" aria-label="Увеличить скриншот: Коллекция"><img src="screenshots/05-collection.webp" loading="lazy" decoding="async" alt="Коллекция в Darkwave"></a><figcaption><strong>Коллекция</strong><span>Любимые треки, сохранённые альбомы и исполнители.</span></figcaption></figure><figure><a class="shot pic-07-discord" href="screenshots/07-discord.webp" data-slide="6" aria-label="Увеличить скриншот: Статус в Discord"><img src="screenshots/07-discord.webp" loading="lazy" decoding="async" alt="Статус в Discord в Darkwave"></a><figcaption><strong>Discord</strong><span>Обложка, название и прогресс трека в профиле.</span></figcaption></figure></div>
+  </div>
+</section>
+
+<section id="download" style="padding-top:20px">
+  <div class="wrap">
+    <div class="dl reveal">
+      <div class="eyebrow">Скачать</div>
+      <h2>Скачать Darkwave</h2>
+      <p class="sub" style="margin:0 auto">Установи за минуту. Дальше приложение обновляется само.</p>
+      <div class="ver">Актуальная версия: <b class="js-ver">1.0.9</b></div><br>
+      <div class="cta" style="margin-top:12px">
+        <a class="btn primary js-dl" id="dlbtn" href="https://darkwave-downloads.frol748748.workers.dev/download/Darkwave-Setup-1.0.8.exe" style="padding:16px 34px;font-size:17px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg>
+          Скачать для Windows <span class="js-ver-btn"></span>
+        </a>
+        <a class="btn js-apk" id="apkbtn" href="#download" style="padding:16px 34px;font-size:17px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M11 18.5h2"/></svg>
+          Скачать для Android <span class="js-ver-btn"></span>
+        </a>
+      </div>
+      <div class="req"><span>Windows 10 / 11 (64-bit)</span><span>·</span><span>Android (установка из APK)</span><span>·</span><span>Скачанное работает офлайн</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="y"></span> Darkwave</span>
+    <span>Версия <span class="js-ver">1.0.9</span></span>
+  </div>
+</footer>
+
+<dialog id="viewer" aria-labelledby="caption"><div class="viewer-shell"><header><strong id="caption"></strong><button id="dismiss" aria-label="Закрыть">×</button></header><img id="large" alt=""><footer><button id="prev" aria-label="Предыдущий скриншот">←</button><span id="count"></span><button id="next" aria-label="Следующий скриншот">→</button></footer></div></dialog>
+
+<script>
+/* ===== Настройки загрузки и версии ===== */
+var UPDATES_BASE = "https://ylwuvijbserlqwnicmkk.supabase.co/storage/v1/object/public/darkwave-updates/";
+var DOWNLOAD_BASE = "https://darkwave-downloads.frol748748.workers.dev/download/";
+/* ССЫЛКА НА APK — поправь под свой файл. {version} заменяется на актуальную версию */
+var ANDROID_URL = UPDATES_BASE + "Darkwave-{version}.apk";
+var FALLBACK_VERSION = "1.0.9";               // показывается, если проверить версию не удалось
+var VERSION_FILES = ["latest.yml", "version.json"]; // что искать в папке обновлений
+
+function setVersion(v){
+  document.querySelectorAll(".js-ver").forEach(function(e){e.textContent=v});
+  document.querySelectorAll(".js-ver-btn").forEach(function(e){e.textContent="v"+v});
+  var url = DOWNLOAD_BASE + "Darkwave-Setup-" + v + ".exe";
+  document.querySelectorAll(".js-dl").forEach(function(a){
+    if(a.id==="dlbtn") a.href = url;
+    else a.href = "#download";
+  });
+  var apk = ANDROID_URL.replace("{version}", v);
+  var ab = document.getElementById("apkbtn"); if(ab) ab.href = apk;
+  try{localStorage.setItem("dw_ver", v)}catch(e){}
+}
+
+function parseVersion(text, file){
+  if(file.slice(-5)===".json"){ try{ var j=JSON.parse(text); return j.version||j.latest||null }catch(e){return null} }
+  var m = text.match(/^\s*version:\s*['"]?([0-9][^'"\s]*)/m);   // latest.yml от electron-updater
+  return m ? m[1] : null;
+}
+
+async function detectVersion(){
+  for(var i=0;i<VERSION_FILES.length;i++){
+    try{
+      var r = await fetch(UPDATES_BASE + VERSION_FILES[i] + "?t=" + Date.now(), {cache:"no-store"});
+      if(!r.ok) continue;
+      var v = parseVersion(await r.text(), VERSION_FILES[i]);
+      if(v) return v;
+    }catch(e){}
+  }
+  return null;
+}
+
+(function(){
+  var cached=null; try{cached=localStorage.getItem("dw_ver")}catch(e){}
+  setVersion(cached || FALLBACK_VERSION);
+  detectVersion().then(function(v){ if(v) setVersion(v); });
+  document.getElementById("y").textContent = new Date().getFullYear();
+})();
+
+
+const slides = Array.from(document.querySelectorAll('[data-slide]')).sort((a,b)=>Number(a.dataset.slide)-Number(b.dataset.slide));
+const viewer = document.getElementById('viewer');
+let selected = 0;
+function showSlide(index) {
+  selected = (index + slides.length) % slides.length;
+  const link = slides[selected];
+  document.getElementById('large').src = link.href;
+  document.getElementById('large').alt = link.querySelector('img').alt;
+  document.getElementById('caption').textContent = link.getAttribute('aria-label').replace('Увеличить скриншот: ', '');
+  document.getElementById('count').textContent = (selected+1) + ' / ' + slides.length;
+}
+slides.forEach((link,index)=>link.addEventListener('click',event=>{
+  if (!viewer.showModal || event.ctrlKey || event.metaKey) return;
+  event.preventDefault(); showSlide(index); viewer.showModal(); document.body.style.overflow='hidden';
+}));
+document.getElementById('prev').onclick=()=>showSlide(selected-1);
+document.getElementById('next').onclick=()=>showSlide(selected+1);
+document.getElementById('dismiss').onclick=()=>viewer.close();
+viewer.addEventListener('close',()=>{document.body.style.overflow=''});
+viewer.addEventListener('click',e=>{if(e.target===viewer)viewer.close()});
+viewer.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();showSlide(selected+(e.key==='ArrowLeft'?-1:1))}
+});
+
+if ('IntersectionObserver' in window) {
+  const reveal = new IntersectionObserver(entries => {
+    for (const {target,isIntersecting} of entries) if (isIntersecting) {
+      target.classList.add('visible');
+      reveal.unobserve(target);
+    }
+  }, {threshold:0.06});
+  document.querySelectorAll('.center.reveal, .feature .txt, .feature .shot, .gallery figure, .dl').forEach(el => {
+    el.classList.add('await-reveal');
+    reveal.observe(el);
+  });
+  const hero = document.querySelector('.hero');
+  let inView = true;
+  const pauseOrb = () => hero.classList.toggle('plasma-idle', !inView || document.hidden || viewer.open);
+  new IntersectionObserver(([entry]) => {inView=entry.isIntersecting;pauseOrb()}).observe(hero);
+  document.addEventListener('visibilitychange',pauseOrb);
+  new MutationObserver(pauseOrb).observe(viewer,{attributes:true,attributeFilter:['open']});
+}
+</script></body></html>

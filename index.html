@@ -13,7 +13,7 @@
   --radius:18px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scrollbar-gutter:stable}
 body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0;z-index:-1;background:
   radial-gradient(900px 500px at 15% -5%,rgba(240,96,143,.18),transparent 60%),
@@ -95,14 +95,6 @@ h2{font-size:clamp(30px,4.4vw,48px);line-height:1.1;letter-spacing:-1px;margin:1
 footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted);font-size:14px}
 footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
-/* lightbox */
-#lb{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;place-items:center;z-index:100;padding:24px;cursor:zoom-out}
-#lb.on{display:grid}
-#lb img{max-width:100%;max-height:100%;border-radius:10px}
-
-.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}
-.reveal.in{opacity:1;transform:none}
-
 @media(max-width:900px){
   .links a.hide-m{display:none}
   .feature,.feature.rev{grid-template-columns:1fr;gap:28px;margin-top:64px}
@@ -127,30 +119,43 @@ section{scroll-margin-top:64px}.reveal{opacity:1;transform:none}
 .btn.primary{color:#211018!important;background:#f3a1b7;box-shadow:none}
 .feature{padding-top:clamp(25px,4vw,62px);border-top:1px solid var(--line);margin-top:clamp(35px,5vw,72px)}
 .gallery{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}.gallery figure{min-width:0}.gallery figure figcaption{text-align:left;padding:5px 0}.gallery strong,.gallery span{display:block}.gallery strong{color:var(--text);font-size:20px}.pic-07-discord{background:radial-gradient(ellipse,#483141,#1e171f);border-color:#48323f}
-#viewer{position:fixed;inset:0;margin:auto;border:0;background:transparent;color:var(--text);width:100vw;max-width:none;height:100dvh;max-height:none;padding:clamp(10px,2vw,24px)}
-#viewer::backdrop{background:#08070af5}.viewer-shell{margin:auto;width:fit-content;max-width:100%;height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:8px}.viewer-shell header,.viewer-shell footer{display:flex;align-items:center;gap:16px;justify-content:space-between;padding:0;border:0}.viewer-shell footer{justify-content:center}.viewer-shell img{width:100%;height:100%;object-fit:contain}.viewer-shell button{width:44px;height:44px;border:1px solid #564651;background:#211c23;border-radius:50%;color:inherit;font-size:24px;cursor:pointer}.viewer-shell{width:min(100%,1600px);pointer-events:none}.viewer-shell img,.viewer-shell button{pointer-events:auto}
+#viewer{position:fixed;inset:0;margin:auto;border:0;background:transparent;color:var(--text);width:100%;max-width:none;height:100dvh;max-height:none;padding:clamp(12px,2vw,24px)}
+#viewer::backdrop{background:#08070af5}
+.viewer-shell{width:min(100%,1600px);height:100%;margin:auto;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;pointer-events:none}
+.viewer-shell header,.viewer-shell footer{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0;border:0}
+.viewer-shell footer{justify-content:center}
+.viewer-stage{display:grid;grid-template:minmax(0,1fr) / minmax(0,1fr);place-items:center;position:relative;overflow:hidden}
+.viewer-stage img{grid-area:1/1;display:block;max-width:100%;max-height:100%;min-width:0;min-height:0;object-fit:contain;pointer-events:auto}
+.viewer-shell button{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;line-height:0;border:1px solid #61505e;border-radius:50%;background:#211c23;color:var(--text);cursor:pointer;pointer-events:auto}
+.viewer-shell button:hover{background:#382a34}
+.viewer-shell button svg{display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#count{font-variant-numeric:tabular-nums}
+html.viewer-open{overflow:hidden}
 @media(max-width:850px){.hero .wrap{grid-template-columns:1fr}.hero{padding:55px 0 34px}.shot-hero{margin-top:12px}.gallery{grid-template-columns:1fr}.hero::before{background-position:center}.wrap{width:min(1180px,100% - 32px)}}
 
 body::before{background:radial-gradient(ellipse at 86% 55%,#1b101d 0,transparent 48%),#0c0b10}
 .hero{overflow:hidden;background:#0e0b13}
-.plasma-field{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:radial-gradient(ellipse at 58% 40%,#432032 0,#201320 42%,#100d15 80%)}
-.plasma-orb{position:absolute;width:clamp(440px,63vw,950px);aspect-ratio:1;left:45%;top:40%;transform:translate(-50%,-50%);background:url('assets/plasma.webp') center/contain no-repeat;mix-blend-mode:screen}
-.plasma-field::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#100b14be,transparent 63%),linear-gradient(0deg,#0c0b10,transparent 22%)}
+.equalizer{position:absolute;inset:0;z-index:-1;display:flex;align-items:flex-end;gap:clamp(2px,.42vw,8px);overflow:hidden;pointer-events:none;background:linear-gradient(145deg,#130e17 12%,#2e1826 72%,#1e131f)}
+.equalizer span{flex:1;min-width:0;height:var(--bar-height);transform-origin:bottom;border-radius:4px 4px 0 0;background:linear-gradient(to top,#381327,#a5466a 76%,#f5a5b8);opacity:.65}
+.equalizer::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#100b14ba,transparent 65%),linear-gradient(0deg,#0c0b10,transparent 26%)}
 .hero .lead{color:#e0d4d8}.hero .meta{color:#c5b6c1}
-@keyframes plasma-drift{from{transform:translate(-51%,-49%) rotate(-9deg) scale(.97)}to{transform:translate(-47%,-53%) rotate(12deg) scale(1.05)}}
-@keyframes rise-in{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@keyframes meter{0%,100%{transform:scaleY(.44)}27%{transform:scaleY(.83)}48%{transform:scaleY(.57)}74%{transform:scaleY(1)}}
+@keyframes veil{from{opacity:0}to{opacity:1}}
+@keyframes viewer-in{from{opacity:0;transform:translateY(6px) scale(.985)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:no-preference){
- .plasma-orb{animation:plasma-drift 19s ease-in-out infinite alternate}
- .plasma-idle .plasma-orb{animation-play-state:paused}
- .hero-copy>* ,.shot-hero{animation:rise-in .75s cubic-bezier(.2,.68,.19,1) both}
- .hero-copy .lead{animation-delay:70ms}.hero-copy .cta,.shot-hero{animation-delay:140ms}.hero-copy .meta{animation-delay:200ms}
- .await-reveal{opacity:0;transform:translateY(18px);transition:opacity .65s ease-out,transform .65s cubic-bezier(.22,.7,.22,1)}
- .await-reveal.visible,.await-reveal:focus-within{opacity:1;transform:none}
- .gallery figure:nth-child(2){transition-delay:65ms}.gallery figure:nth-child(3){transition-delay:130ms}
- #viewer[open] .viewer-shell{animation:rise-in .22s ease-out}
+ .equalizer span{animation:meter var(--period) ease-in-out var(--phase) infinite}
+ .meter-idle .equalizer span{animation-play-state:paused}
+ .await-reveal{transition:opacity .44s ease,transform .52s cubic-bezier(.22,.7,.22,1)}
+ .await-reveal:not(.visible):not(:focus-within){opacity:0;transform:translateY(16px)}
+ #viewer[open]::backdrop{animation:veil .22s ease-out both}
+ #viewer[open] .viewer-shell{animation:viewer-in .24s ease-out both}
+ #viewer.closing::backdrop{animation:veil .16s ease-in reverse both}
+ #viewer.closing .viewer-shell{animation:viewer-in .16s ease-in reverse both}
 }
-@media(max-width:850px){.plasma-orb{left:70%;top:28%;width:clamp(430px,95vw,740px)}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important}.btn,.reveal,.await-reveal{transition:none!important}.await-reveal{opacity:1!important;transform:none!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+/* Мягкое статическое свечение под всеми скриншотами. */
+.shot{box-shadow:0 30px 48px -26px rgba(0,0,0,.85),0 20px 38px -19px rgba(242,141,169,.32)}
+.shot-hero::before{inset:35% 8% -5%;background:radial-gradient(ellipse at 50% 90%,rgba(242,141,169,.22),transparent 72%);filter:blur(24px)}
 </style>
 </head>
 <body>
@@ -167,19 +172,19 @@ body::before{background:radial-gradient(ellipse at 86% 55%,#1b101d 0,transparent
 </nav>
 
 <header class="hero" id="top">
-  <div class="plasma-field" aria-hidden="true"><div class="plasma-orb"></div></div>
+  <div class="equalizer" aria-hidden="true"></div>
   <div class="wrap">
     <div class="hero-copy">
     <h1>Darkwave</h1>
     <p class="lead">Музыкальный плеер для Windows и Android. Открывай треки в «Моей волне», слушай вместе с друзьями и сохраняй любимое для дороги.</p>
     <div class="cta">
-      <a class="btn primary js-dl" href="#download">
+      <a class="btn primary js-dl" href="https://darkwave-downloads.frol748748.workers.dev/download/Darkwave-Setup-1.1.0.exe">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg>
-        Скачать для Windows <span class="js-ver-btn"></span>
+        Скачать для Windows <span class="js-ver-btn">v1.1.0</span>
       </a>
-      <a class="btn js-apk-hero" href="#download">
+      <a class="btn js-apk-hero" href="https://ylwuvijbserlqwnicmkk.supabase.co/storage/v1/object/public/darkwave-updates/Darkwave-Android-1.1.0.apk">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M11 18.5h2"/></svg>
-        Для Android
+        Для Android <span class="js-apk-ver-btn">v1.1.0</span>
       </a>
     </div>
     <p class="meta">Бесплатно · Windows и Android</p></div>
@@ -256,18 +261,17 @@ body::before{background:radial-gradient(ellipse at 86% 55%,#1b101d 0,transparent
 <section id="download" style="padding-top:20px">
   <div class="wrap">
     <div class="dl reveal">
-      <div class="eyebrow">Скачать</div>
       <h2>Скачать Darkwave</h2>
       <p class="sub" style="margin:0 auto">Установи за минуту. Дальше приложение обновляется само.</p>
-      <div class="ver">Актуальная версия: <b class="js-ver">1.0.9</b></div><br>
+      <div class="ver">Актуальная версия: <b class="js-ver">1.1.0</b></div><br>
       <div class="cta" style="margin-top:12px">
-        <a class="btn primary js-dl" id="dlbtn" href="https://darkwave-downloads.frol748748.workers.dev/download/Darkwave-Setup-1.0.8.exe" style="padding:16px 34px;font-size:17px">
+        <a class="btn primary js-dl" id="dlbtn" href="https://darkwave-downloads.frol748748.workers.dev/download/Darkwave-Setup-1.1.0.exe" style="padding:16px 34px;font-size:17px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg>
-          Скачать для Windows <span class="js-ver-btn"></span>
+          Скачать для Windows <span class="js-ver-btn">v1.1.0</span>
         </a>
-        <a class="btn js-apk" id="apkbtn" href="#download" style="padding:16px 34px;font-size:17px">
+        <a class="btn js-apk" id="apkbtn" href="https://ylwuvijbserlqwnicmkk.supabase.co/storage/v1/object/public/darkwave-updates/Darkwave-Android-1.1.0.apk" style="padding:16px 34px;font-size:17px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M11 18.5h2"/></svg>
-          Скачать для Android <span class="js-ver-btn"></span>
+          Скачать для Android <span class="js-apk-ver-btn">v1.1.0</span>
         </a>
       </div>
       <div class="req"><span>Windows 10 / 11 (64-bit)</span><span>·</span><span>Android (установка из APK)</span><span>·</span><span>Скачанное работает офлайн</span></div>
@@ -278,100 +282,192 @@ body::before{background:radial-gradient(ellipse at 86% 55%,#1b101d 0,transparent
 <footer>
   <div class="wrap">
     <span>© <span id="y"></span> Darkwave</span>
-    <span>Версия <span class="js-ver">1.0.9</span></span>
+    <span>Версия <span class="js-ver">1.1.0</span></span>
   </div>
 </footer>
 
-<dialog id="viewer" aria-labelledby="caption"><div class="viewer-shell"><header><strong id="caption"></strong><button id="dismiss" aria-label="Закрыть">×</button></header><img id="large" alt=""><footer><button id="prev" aria-label="Предыдущий скриншот">←</button><span id="count"></span><button id="next" aria-label="Следующий скриншот">→</button></footer></div></dialog>
+<dialog id="viewer" aria-labelledby="caption">
+  <div class="viewer-shell">
+    <header><strong id="caption"></strong><button type="button" id="dismiss" aria-label="Закрыть"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
+    <div class="viewer-stage"></div>
+    <footer>
+      <button type="button" id="prev" aria-label="Предыдущий скриншот"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg></button>
+      <span id="count" aria-live="polite"></span>
+      <button type="button" id="next" aria-label="Следующий скриншот"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></button>
+    </footer>
+  </div>
+</dialog>
 
 <script>
-/* ===== Настройки загрузки и версии ===== */
-var UPDATES_BASE = "https://ylwuvijbserlqwnicmkk.supabase.co/storage/v1/object/public/darkwave-updates/";
-var DOWNLOAD_BASE = "https://darkwave-downloads.frol748748.workers.dev/download/";
-/* ССЫЛКА НА APK — поправь под свой файл. {version} заменяется на актуальную версию */
-var ANDROID_URL = UPDATES_BASE + "Darkwave-{version}.apk";
-var FALLBACK_VERSION = "1.0.9";               // показывается, если проверить версию не удалось
-var VERSION_FILES = ["latest.yml", "version.json"]; // что искать в папке обновлений
+/* ===== Загрузки: независимые манифесты Windows и Android ===== */
+const UPDATES_BASE = "https://ylwuvijbserlqwnicmkk.supabase.co/storage/v1/object/public/darkwave-updates/";
+const DOWNLOAD_BASE = "https://darkwave-downloads.frol748748.workers.dev/download/";
+const FALLBACK_VERSION = "1.1.0";
+const releases = {
+  windows: {version:FALLBACK_VERSION, url:DOWNLOAD_BASE + "Darkwave-Setup-" + FALLBACK_VERSION + ".exe"},
+  android: {version:FALLBACK_VERSION, url:UPDATES_BASE + "Darkwave-Android-" + FALLBACK_VERSION + ".apk"}
+};
 
-function setVersion(v){
-  document.querySelectorAll(".js-ver").forEach(function(e){e.textContent=v});
-  document.querySelectorAll(".js-ver-btn").forEach(function(e){e.textContent="v"+v});
-  var url = DOWNLOAD_BASE + "Darkwave-Setup-" + v + ".exe";
-  document.querySelectorAll(".js-dl").forEach(function(a){
-    if(a.id==="dlbtn") a.href = url;
-    else a.href = "#download";
-  });
-  var apk = ANDROID_URL.replace("{version}", v);
-  var ab = document.getElementById("apkbtn"); if(ab) ab.href = apk;
-  try{localStorage.setItem("dw_ver", v)}catch(e){}
-}
-
-function parseVersion(text, file){
-  if(file.slice(-5)===".json"){ try{ var j=JSON.parse(text); return j.version||j.latest||null }catch(e){return null} }
-  var m = text.match(/^\s*version:\s*['"]?([0-9][^'"\s]*)/m);   // latest.yml от electron-updater
-  return m ? m[1] : null;
-}
-
-async function detectVersion(){
-  for(var i=0;i<VERSION_FILES.length;i++){
-    try{
-      var r = await fetch(UPDATES_BASE + VERSION_FILES[i] + "?t=" + Date.now(), {cache:"no-store"});
-      if(!r.ok) continue;
-      var v = parseVersion(await r.text(), VERSION_FILES[i]);
-      if(v) return v;
-    }catch(e){}
+function isCurrentVersion(version) {
+  if (typeof version !== "string" || !/^\d+\.\d+\.\d+$/.test(version)) return false;
+  const current = FALLBACK_VERSION.split(".").map(Number);
+  const candidate = version.split(".").map(Number);
+  for (let i = 0; i < current.length; i++) {
+    if (candidate[i] !== current[i]) return candidate[i] > current[i];
   }
-  return null;
+  return true;
 }
 
-(function(){
-  var cached=null; try{cached=localStorage.getItem("dw_ver")}catch(e){}
-  setVersion(cached || FALLBACK_VERSION);
-  detectVersion().then(function(v){ if(v) setVersion(v); });
-  document.getElementById("y").textContent = new Date().getFullYear();
-})();
+function renderReleases() {
+  const win = releases.windows, apk = releases.android;
+  document.querySelectorAll(".js-dl").forEach(a => a.href = win.url);
+  document.querySelectorAll(".js-apk, .js-apk-hero").forEach(a => a.href = apk.url);
+  document.querySelectorAll(".js-ver-btn").forEach(e => e.textContent = "v" + win.version);
+  document.querySelectorAll(".js-apk-ver-btn").forEach(e => e.textContent = "v" + apk.version);
+  const versionLabel = win.version === apk.version ? win.version : "Windows " + win.version + " / Android " + apk.version;
+  document.querySelectorAll(".js-ver").forEach(e => e.textContent = versionLabel);
+}
 
+async function loadRelease(platform, manifest, extension) {
+  try {
+    const response = await fetch(UPDATES_BASE + manifest + "?t=" + Date.now(), {cache:"no-store"});
+    if (!response.ok) return;
+    const release = await response.json();
+    if (!release || !isCurrentVersion(release.version) || typeof release.url !== "string") return;
+    const url = new URL(release.url);
+    if (url.protocol !== "https:" || !url.pathname.toLowerCase().endsWith(extension)) return;
+    releases[platform] = {version:release.version, url:url.href};
+    renderReleases();
+  } catch (error) { /* Оставляем рабочую резервную ссылку версии 1.1.0. */ }
+}
+
+renderReleases();
+loadRelease("windows", "latest.json", ".exe");
+loadRelease("android", "latest-android.json", ".apk");
+document.getElementById("y").textContent = new Date().getFullYear();
 
 const slides = Array.from(document.querySelectorAll('[data-slide]')).sort((a,b)=>Number(a.dataset.slide)-Number(b.dataset.slide));
 const viewer = document.getElementById('viewer');
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const stage = viewer.querySelector('.viewer-stage');
+const caption = document.getElementById('caption');
+const count = document.getElementById('count');
 let selected = 0;
-function showSlide(index) {
-  selected = (index + slides.length) % slides.length;
-  const link = slides[selected];
-  document.getElementById('large').src = link.href;
-  document.getElementById('large').alt = link.querySelector('img').alt;
-  document.getElementById('caption').textContent = link.getAttribute('aria-label').replace('Увеличить скриншот: ', '');
-  document.getElementById('count').textContent = (selected+1) + ' / ' + slides.length;
+let revision = 0;
+
+function describeSlide(link, index) {
+  caption.textContent = link.getAttribute('aria-label').replace('Увеличить скриншот: ', '');
+  count.textContent = (index + 1) + ' / ' + slides.length;
 }
-slides.forEach((link,index)=>link.addEventListener('click',event=>{
-  if (!viewer.showModal || event.ctrlKey || event.metaKey) return;
-  event.preventDefault(); showSlide(index); viewer.showModal(); document.body.style.overflow='hidden';
+
+async function showSlide(index, direction = 0) {
+  selected = (index + slides.length) % slides.length;
+  const request = ++revision;
+  const link = slides[selected];
+  const img = new Image();
+  img.alt = link.querySelector('img').alt;
+  img.src = link.href;
+  if (direction) {
+    try { await img.decode(); } catch { /* Keep the alt text for missing files. */ }
+  }
+  if (request !== revision) return;
+  const previous = stage.lastElementChild;
+  if (!direction || !previous || reducedMotion.matches) {
+    stage.replaceChildren(img);
+  } else {
+    stage.replaceChildren(previous, img);
+    previous.getAnimations().forEach(animation => animation.cancel());
+    previous.setAttribute('aria-hidden', 'true');
+    const timing = {duration: 270, easing: 'cubic-bezier(.22,.7,.22,1)', fill: 'both'};
+    previous.animate([{opacity:1}, {opacity:0, transform:'translateX(' + (-14 * direction) + 'px)'}], timing);
+    const arrival = img.animate([{opacity:0, transform:'translateX(' + (18 * direction) + 'px)'}, {opacity:1, transform:'none'}], timing);
+    arrival.finished.then(() => { previous.remove(); arrival.cancel(); }, () => {});
+  }
+  describeSlide(link, selected);
+}
+
+function closeViewer() {
+  if (!viewer.open || viewer.classList.contains('closing')) return;
+  ++revision;
+  viewer.classList.add('closing');
+  const animations = viewer.querySelector('.viewer-shell').getAnimations();
+  Promise.allSettled(animations.map(animation => animation.finished)).then(() => viewer.close());
+}
+
+slides.forEach((link,index) => link.addEventListener('click', event => {
+  if (!viewer.showModal || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  viewer.classList.remove('closing');
+  showSlide(index);
+  viewer.showModal();
+  document.documentElement.classList.add('viewer-open');
 }));
-document.getElementById('prev').onclick=()=>showSlide(selected-1);
-document.getElementById('next').onclick=()=>showSlide(selected+1);
-document.getElementById('dismiss').onclick=()=>viewer.close();
-viewer.addEventListener('close',()=>{document.body.style.overflow=''});
-viewer.addEventListener('click',e=>{if(e.target===viewer)viewer.close()});
-viewer.addEventListener('keydown',e=>{
-  if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();showSlide(selected+(e.key==='ArrowLeft'?-1:1))}
+function step(direction) {
+  if (!viewer.classList.contains('closing')) showSlide(selected + direction, direction);
+}
+document.getElementById('prev').onclick = () => step(-1);
+document.getElementById('next').onclick = () => step(1);
+document.getElementById('dismiss').onclick = closeViewer;
+viewer.addEventListener('cancel', event => { event.preventDefault(); closeViewer(); });
+viewer.addEventListener('close', () => {
+  document.documentElement.classList.remove('viewer-open');
+  viewer.classList.remove('closing');
+  stage.replaceChildren();
 });
+viewer.addEventListener('click', event => { if (event.target === viewer) closeViewer(); });
+viewer.addEventListener('keydown', event => {
+  if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+    event.preventDefault();
+    step(event.key === 'ArrowLeft' ? -1 : 1);
+  }
+});
+
+const meter = document.querySelector('.equalizer');
+const bars = document.createDocumentFragment();
+for (let i = 0; i < 60; i++) {
+  const bar = document.createElement('span');
+  const envelope = (1 + Math.sin(i * .19 + .8)) / 2;
+  const peak = (1 + Math.sin(i * 1.32) * Math.cos(i * .31)) / 2;
+  bar.style.setProperty('--bar-height', (22 + 43 * envelope + 25 * peak) + '%');
+  bar.style.setProperty('--period', (1.3 + .65 * peak) + 's');
+  bar.style.setProperty('--phase', (-2.7 * envelope - .4 * peak) + 's');
+  bars.append(bar);
+}
+meter.append(bars);
 
 if ('IntersectionObserver' in window) {
   const reveal = new IntersectionObserver(entries => {
-    for (const {target,isIntersecting} of entries) if (isIntersecting) {
-      target.classList.add('visible');
-      reveal.unobserve(target);
-    }
-  }, {threshold:0.06});
-  document.querySelectorAll('.center.reveal, .feature .txt, .feature .shot, .gallery figure, .dl').forEach(el => {
+    for (const entry of entries) entry.target.classList.toggle('visible', entry.isIntersecting);
+  }, {rootMargin:'0px 0px -72px 0px', threshold:0});
+  document.querySelectorAll('.hero-copy > *, .shot-hero, .center.reveal, .feature .txt, .feature .shot, .gallery figure, .dl').forEach(el => {
     el.classList.add('await-reveal');
     reveal.observe(el);
   });
   const hero = document.querySelector('.hero');
-  let inView = true;
-  const pauseOrb = () => hero.classList.toggle('plasma-idle', !inView || document.hidden || viewer.open);
-  new IntersectionObserver(([entry]) => {inView=entry.isIntersecting;pauseOrb()}).observe(hero);
-  document.addEventListener('visibilitychange',pauseOrb);
-  new MutationObserver(pauseOrb).observe(viewer,{attributes:true,attributeFilter:['open']});
+  let heroVisible = true;
+  const pauseMeter = () => hero.classList.toggle('meter-idle', !heroVisible || document.hidden || viewer.open);
+  new IntersectionObserver(([entry]) => {heroVisible = entry.isIntersecting; pauseMeter();}).observe(hero);
+  document.addEventListener('visibilitychange', pauseMeter);
+  new MutationObserver(pauseMeter).observe(viewer, {attributes:true, attributeFilter:['open']});
 }
+
+// Keep touch, fine trackpad movement and browser zoom native.
+let wheelTarget = null;
+let wheelTimer;
+function resetWheel() { wheelTarget = null; }
+window.addEventListener('wheel', event => {
+  if (!event.cancelable || viewer.open || reducedMotion.matches || event.ctrlKey || event.metaKey ||
+      event.shiftKey || event.altKey || event.deltaX || (event.deltaMode === 0 && Math.abs(event.deltaY) < 50)) {
+    resetWheel();
+    return;
+  }
+  event.preventDefault();
+  const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? innerHeight : 1;
+  const limit = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  wheelTarget = Math.max(0, Math.min(limit, (wheelTarget ?? scrollY) + event.deltaY * unit));
+  window.scrollTo({top:wheelTarget, behavior:'smooth'});
+  clearTimeout(wheelTimer);
+  wheelTimer = setTimeout(resetWheel, 340);
+}, {passive:false});
+for (const type of ['pointerdown','keydown','touchstart']) window.addEventListener(type, resetWheel, {passive:true});
 </script></body></html>

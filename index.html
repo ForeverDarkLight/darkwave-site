@@ -182,9 +182,9 @@ body::before{background:radial-gradient(ellipse at 86% 55%,#1b101d 0,transparent
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg>
         Скачать для Windows <span class="js-ver-btn">v1.1.0</span>
       </a>
-      <a class="btn js-apk-hero" href="https://ylwuvijbserlqwnicmkk.supabase.co/storage/v1/object/public/darkwave-updates/Darkwave-Android-1.1.0.apk">
+      <a class="btn js-apk-hero" href="https://ylwuvijbserlqwnicmkk.supabase.co/storage/v1/object/public/darkwave-updates/Darkwave-1.0.8.apk">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M11 18.5h2"/></svg>
-        Для Android <span class="js-apk-ver-btn">v1.1.0</span>
+        Для Android <span class="js-apk-ver-btn">v1.0.8</span>
       </a>
     </div>
     <p class="meta">Бесплатно · Windows и Android</p></div>
@@ -263,15 +263,15 @@ body::before{background:radial-gradient(ellipse at 86% 55%,#1b101d 0,transparent
     <div class="dl reveal">
       <h2>Скачать Darkwave</h2>
       <p class="sub" style="margin:0 auto">Установи за минуту. Дальше приложение обновляется само.</p>
-      <div class="ver">Актуальная версия: <b class="js-ver">1.1.0</b></div><br>
+      <div class="ver">Версии: <b class="js-ver">Windows 1.1.0 / Android 1.0.8</b></div><br>
       <div class="cta" style="margin-top:12px">
         <a class="btn primary js-dl" id="dlbtn" href="https://darkwave-downloads.frol748748.workers.dev/download/Darkwave-Setup-1.1.0.exe" style="padding:16px 34px;font-size:17px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg>
           Скачать для Windows <span class="js-ver-btn">v1.1.0</span>
         </a>
-        <a class="btn js-apk" id="apkbtn" href="https://ylwuvijbserlqwnicmkk.supabase.co/storage/v1/object/public/darkwave-updates/Darkwave-Android-1.1.0.apk" style="padding:16px 34px;font-size:17px">
+        <a class="btn js-apk" id="apkbtn" href="https://ylwuvijbserlqwnicmkk.supabase.co/storage/v1/object/public/darkwave-updates/Darkwave-1.0.8.apk" style="padding:16px 34px;font-size:17px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M11 18.5h2"/></svg>
-          Скачать для Android <span class="js-apk-ver-btn">v1.1.0</span>
+          Скачать для Android <span class="js-apk-ver-btn">v1.0.8</span>
         </a>
       </div>
       <div class="req"><span>Windows 10 / 11 (64-bit)</span><span>·</span><span>Android (установка из APK)</span><span>·</span><span>Скачанное работает офлайн</span></div>
@@ -282,7 +282,7 @@ body::before{background:radial-gradient(ellipse at 86% 55%,#1b101d 0,transparent
 <footer>
   <div class="wrap">
     <span>© <span id="y"></span> Darkwave</span>
-    <span>Версия <span class="js-ver">1.1.0</span></span>
+    <span class="js-ver">Windows 1.1.0 / Android 1.0.8</span>
   </div>
 </footer>
 
@@ -301,16 +301,14 @@ body::before{background:radial-gradient(ellipse at 86% 55%,#1b101d 0,transparent
 <script>
 /* ===== Загрузки: независимые манифесты Windows и Android ===== */
 const UPDATES_BASE = "https://ylwuvijbserlqwnicmkk.supabase.co/storage/v1/object/public/darkwave-updates/";
-const DOWNLOAD_BASE = "https://darkwave-downloads.frol748748.workers.dev/download/";
-const FALLBACK_VERSION = "1.1.0";
 const releases = {
-  windows: {version:FALLBACK_VERSION, url:DOWNLOAD_BASE + "Darkwave-Setup-" + FALLBACK_VERSION + ".exe"},
-  android: {version:FALLBACK_VERSION, url:UPDATES_BASE + "Darkwave-Android-" + FALLBACK_VERSION + ".apk"}
+  windows: {version:"1.1.0", url:document.getElementById("dlbtn").href},
+  android: {version:"1.0.8", url:document.getElementById("apkbtn").href}
 };
 
-function isCurrentVersion(version) {
+function isCurrentVersion(version, currentVersion) {
   if (typeof version !== "string" || !/^\d+\.\d+\.\d+$/.test(version)) return false;
-  const current = FALLBACK_VERSION.split(".").map(Number);
+  const current = currentVersion.split(".").map(Number);
   const candidate = version.split(".").map(Number);
   for (let i = 0; i < current.length; i++) {
     if (candidate[i] !== current[i]) return candidate[i] > current[i];
@@ -333,12 +331,16 @@ async function loadRelease(platform, manifest, extension) {
     const response = await fetch(UPDATES_BASE + manifest + "?t=" + Date.now(), {cache:"no-store"});
     if (!response.ok) return;
     const release = await response.json();
-    if (!release || !isCurrentVersion(release.version) || typeof release.url !== "string") return;
+    if (!release || !isCurrentVersion(release.version, releases[platform].version) || typeof release.url !== "string") return;
     const url = new URL(release.url);
     if (url.protocol !== "https:" || !url.pathname.toLowerCase().endsWith(extension)) return;
+    if (platform === "android" && url.href !== releases.android.url) {
+      const apk = await fetch(url, {method:"HEAD", cache:"no-store"});
+      if (!apk.ok) return;
+    }
     releases[platform] = {version:release.version, url:url.href};
     renderReleases();
-  } catch (error) { /* Оставляем рабочую резервную ссылку версии 1.1.0. */ }
+  } catch (error) { /* При ошибке используем ссылку из HTML. */ }
 }
 
 renderReleases();
